@@ -1,58 +1,27 @@
-
-const multer = require('multer');
 const pool = require('../database')
 
 
-// / Configure multer storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        // Set the destination directory for uploaded files
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        // Set the filename for uploaded files
-        const fileName = `${Date.now()}-${file.originalname}`;
-        cb(null, fileName);
-    },
-});
-
-// Create multer upload instance
-const upload = multer({ storage });
-
-// Handle file upload route
-// app.post('/upload', upload.single('file'), async (req, res) => {
-const uploadDocument = async (req, res) => {  // POST => /document/upload
-    upload.single('file')(req, res, (err) => {
-
-        if (!req.file) {
-            return res.status(400).json({Error:'No file uploaded.'});
-        }
-
-        const { filename, size } = req.file;
-
-        try {
-            // Insert the file details into the database
-            const result = pool.query(
-                'INSERT INTO documents (filename, size) VALUES ($1, $2) RETURNING id',
-                [filename, size]
-            );
-
-            const fileId = result.rows[0].id;
-
-            res.send(`File uploaded: ${filename}, ${size} bytes. File ID: ${fileId}`);
-        } catch (error) {
-            console.error('Error uploading file:', error);
-            res.status(500).send('Error uploading file.');
-        }
-    })
-};
-
-
 // const uploadDocument = async (req, res) => {  // POST => /document/upload
-// res.status(200).json({ message: "Upload api hits.." })
-// }
+//     try {
 
+//         if (res.file) {
+//             res.send("File uploaded..")
+//         } else {
+//             res.send("Failed to File uploaded..")
+//         }
+//     } catch {
+//         console.error("Error during file upload:", error);
+//         res.status(500).send("An error occurred during file upload.");
+//     }
+// };
 
+const uploadDocument = async (req, res) => {  // POST => /document/upload
+
+    const { originalname, encoding, mimetype, destination, filename, path, size } = req.file;
+    const fileDetails = {originalname:originalname, encoding:encoding, mimetype:mimetype, destination:destination, filename:filename, path:path, size:size}
+    // console.log("All Response ==>> File Details =>>", originalname, filename, path, size, encoding, mimetype, destination)
+    res.send({status:true, message:"File Uploaded Successfully",data:fileDetails})
+}
 
 const viewAllDocuments = async (req, res) => {  // POST => /document/view
     res.status(200).json({ message: "View Upload documents api hits.." })

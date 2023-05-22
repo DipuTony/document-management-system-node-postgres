@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
 let cors = require("cors");
+const multer = require('multer');
 
 var pool = require('./src/database'); //Imported Postgres Database
 
@@ -54,6 +55,23 @@ app.use('/register', register)
 // app.use('/customer', authenticateToken, customer)
 app.use('/users', usersList)
 app.use('/document', document)
+
+
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, "uploads")
+        },
+        filename: function (req, file, cb) {
+            cb(null, file.filename + "-" + Date.now() + ".jpg")
+        }
+    })
+}).single("file_this");
+
+// app.post('/upload', upload, (req, res)=>{
+//     res.send("donee..")
+// })
 
 
 
