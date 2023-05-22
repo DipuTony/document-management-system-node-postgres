@@ -14,9 +14,6 @@ const secretKey = 'mysecretkey';
 
 app.use(cors());
 
-
-
-
 app.get('/', (req, res, next) => {
     console.log("API Call Started")
     next();
@@ -28,15 +25,6 @@ app.get('/', (req, res, next) => {
 app.get('/', (req, res) => {
     console.log("API Call Ended")
 });
-
-// app.get('*', (req, res) => {
-//     const msg = {
-//         code: 404,
-//         message: "URL Not Found!",
-//         status: false
-//     }
-//     res.send(msg)
-// });
 
 // Middleware function to verify the JSON Web Token
 function authenticateToken(req, res, next) {
