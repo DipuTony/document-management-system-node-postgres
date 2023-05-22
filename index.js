@@ -72,5 +72,5 @@ app.use('/document', document)
 
 
 app.listen(process.env.PORT || 8001, () => {
-    console.log("App is listing on 8001")
+    console.log("App is listing on http://localhost:8001/")
 });

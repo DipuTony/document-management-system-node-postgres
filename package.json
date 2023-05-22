@@ -4,8 +4,6 @@
   "description": "This is for learning",
   "main": "index.js",
   "scripts": {
-    "index": "nodemon index.js",
-    "nodemon": "run index",
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
