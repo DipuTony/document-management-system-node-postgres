@@ -1,30 +1,39 @@
+const { saveUploadDocumentDetails, viewAllDocument } = require('../modal/documetModal')
 const pool = require('../database')
 
 
-// const uploadDocument = async (req, res) => {  // POST => /document/upload
-//     try {
-
-//         if (res.file) {
-//             res.send("File uploaded..")
-//         } else {
-//             res.send("Failed to File uploaded..")
-//         }
-//     } catch {
-//         console.error("Error during file upload:", error);
-//         res.status(500).send("An error occurred during file upload.");
-//     }
-// };
-
 const uploadDocument = async (req, res) => {  // POST => /document/upload
 
+
     const { originalname, encoding, mimetype, destination, filename, path, size } = req.file;
-    const fileDetails = {originalname:originalname, encoding:encoding, mimetype:mimetype, destination:destination, filename:filename, path:path, size:size}
-    // console.log("All Response ==>> File Details =>>", originalname, filename, path, size, encoding, mimetype, destination)
-    res.send({status:true, message:"File Uploaded Successfully",data:fileDetails})
+    const fileDetails = { originalname: originalname, encoding: encoding, mimetype: mimetype, destination: destination, filename: filename, path: path, size: size }
+    try {
+        const user = await saveUploadDocumentDetails(fileDetails);
+        if (user) {
+            res.status(201).json({ "status": true, message: "Document Uploaded Successfully", data: user });
+        } else {
+            res.status(201).json({ "status": false, message: "Failed to upload document user", data: user });
+        }
+    } catch (error) {
+        console.error('Catch Error upload document', error);
+        res.status(500).json({ error: 'Internal Server Error controller Document upload', msg: error });
+    }
 }
 
 const viewAllDocuments = async (req, res) => {  // POST => /document/view
-    res.status(200).json({ message: "View Upload documents api hits.." })
+
+    try {
+        const fetchDocList = await viewAllDocument()
+        if (fetchDocList) {
+            res.status(201).json({ "status": true, message: "List of documents", data: fetchDocList });
+        } else {
+            res.status(201).json({ "status": false, message: "Failed to get doc lists", data: fetchDocList });
+        }
+    } catch (error) {
+        console.error('Catch Error fetch doc lists document', error);
+        res.status(500).json({ error: 'Internal Server Error controller Document fetch ', msg: error });
+    }
+
 }
 
 module.exports = { uploadDocument, viewAllDocuments };

@@ -3,6 +3,10 @@ const app = express();
 const jwt = require('jsonwebtoken');
 let cors = require("cors");
 const multer = require('multer');
+const path = require('path'); // View Document
+require('dotenv').config();
+
+const baseurl = process.env.BASEURL;
 
 var pool = require('./src/database'); //Imported Postgres Database
 
@@ -55,28 +59,11 @@ app.use('/register', register)
 // app.use('/customer', authenticateToken, customer)
 app.use('/users', usersList)
 app.use('/document', document)
+//in this the '/uploads' is route to access the file and 'uploads' is the folder where we have stored the documents.
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
-
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, "uploads")
-        },
-        filename: function (req, file, cb) {
-            cb(null, file.filename + "-" + Date.now() + ".jpg")
-        }
-    })
-}).single("file_this");
-
-// app.post('/upload', upload, (req, res)=>{
-//     res.send("donee..")
-// })
-
-
-
-
-
-app.listen(process.env.PORT || 8001, () => {
-    console.log("App is listing on http://localhost:8001/")
+const PORT = process.env.PORT || 8001;
+app.listen(PORT, () => {
+    console.log(`App is listing on :${baseurl}/`)
 });

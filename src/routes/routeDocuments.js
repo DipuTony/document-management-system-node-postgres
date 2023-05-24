@@ -12,7 +12,6 @@ const upload = multer({
             cb(null, "uploads")
         },
         filename: function (req, file, cb) {
-            console.log("file details..", file)
             cb(null, file.originalname + "-" + Date.now() + '.' + file.originalname.split('.').pop())
         }
     })
