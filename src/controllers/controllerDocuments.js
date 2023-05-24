@@ -3,10 +3,10 @@ const pool = require('../database')
 
 
 const uploadDocument = async (req, res) => {  // POST => /document/upload
-
-
+    const ipAddress = req.connection.remoteAddress;
+    const { tags } = req.body;
     const { originalname, encoding, mimetype, destination, filename, path, size } = req.file;
-    const fileDetails = { originalname: originalname, encoding: encoding, mimetype: mimetype, destination: destination, filename: filename, path: path, size: size }
+    const fileDetails = { originalname: originalname, encoding: encoding, mimetype: mimetype, destination: destination, filename: filename, path: path, size: size, ipAddress, tags }
     try {
         const user = await saveUploadDocumentDetails(fileDetails);
         if (user) {
@@ -21,7 +21,6 @@ const uploadDocument = async (req, res) => {  // POST => /document/upload
 }
 
 const viewAllDocuments = async (req, res) => {  // POST => /document/view
-
     try {
         const fetchDocList = await viewAllDocument()
         if (fetchDocList) {

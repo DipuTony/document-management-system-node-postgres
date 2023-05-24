@@ -3,10 +3,11 @@ const pool = require('../database')
 const url = process.env.BASEURL;
 
 const saveUploadDocumentDetails = async (fileDetails) => {
+    // const ipAddress = req.connection.remoteAddress
     try {
         const client = await pool.connect();
-        const query = 'INSERT INTO documents (originalfilename, encoding, type, destination, filename, path, size) VALUES ($1, $2, $3,$4,$5,$6,$7) RETURNING *';
-        const values = [fileDetails.originalname, fileDetails.encoding, fileDetails.mimetype, fileDetails.destination, fileDetails.filename, fileDetails.path, fileDetails.size];
+        const query = 'INSERT INTO document_master (original_file_name, encoding, type, destination, file_name, path, size, ip_address, tags) VALUES ($1, $2, $3,$4,$5,$6,$7, $8, $9) RETURNING *';
+        const values = [fileDetails.originalname, fileDetails.encoding, fileDetails.mimetype, fileDetails.destination, fileDetails.filename, fileDetails.path, fileDetails.size, fileDetails.ipAddress, fileDetails.tags];
         const result = await client.query(query, values);
         client.release();
         return result.rows[0];
@@ -19,11 +20,8 @@ const saveUploadDocumentDetails = async (fileDetails) => {
 
 const viewAllDocument = async () => {
     try {
-        // res.json({ "status": true, message: "Here is list of documents", data: result.rows });
-        // client.release();
-
         const client = await pool.connect();
-        const result = await client.query('SELECT * FROM documents');
+        const result = await client.query('SELECT * FROM document_master');
         client.release()
         const rows = result.rows;
         const documentsWithFullPath = rows.map((row) => {
