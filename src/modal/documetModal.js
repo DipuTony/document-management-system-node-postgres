@@ -6,8 +6,8 @@ const saveUploadDocumentDetails = async (fileDetails) => {
     // const ipAddress = req.connection.remoteAddress
     try {
         const client = await pool.connect();
-        const query = 'INSERT INTO document_master (original_file_name, encoding, type, destination, file_name, path, size, ip_address, tags) VALUES ($1, $2, $3,$4,$5,$6,$7, $8, $9) RETURNING *';
-        const values = [fileDetails.originalname, fileDetails.encoding, fileDetails.mimetype, fileDetails.destination, fileDetails.filename, fileDetails.path, fileDetails.size, fileDetails.ipAddress, fileDetails.tags];
+        const query = 'INSERT INTO document_master (original_file_name, encoding, type, destination, file_name, path, size, ip_address, tags, digest) VALUES ($1, $2, $3,$4,$5,$6,$7, $8, $9, $10) RETURNING *';
+        const values = [fileDetails.originalname, fileDetails.encoding, fileDetails.mimetype, fileDetails.destination, fileDetails.filename, fileDetails.path, fileDetails.size, fileDetails.ipAddress, fileDetails.tags, fileDetails.computedDigest];
         const result = await client.query(query, values);
         client.release();
         return result.rows[0];

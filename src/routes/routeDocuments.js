@@ -6,7 +6,7 @@ const multer = require('multer');
 const { uploadDocument, viewAllDocuments } = require('../controllers/controllerDocuments')
 
 
-const upload = multer({
+const upload1 = multer({
     storage: multer.diskStorage({
         destination: function (req, file, cb) {
             cb(null, "uploads")
@@ -15,7 +15,18 @@ const upload = multer({
             cb(null, file.originalname + "-" + Date.now() + '.' + file.originalname.split('.').pop())
         }
     })
-}).single("file_this");
+}).single("file");
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'uploads');
+        },
+        filename: function (req, file, cb) {
+            cb(null, file.originalname);
+        },
+    }),
+}).single('file');
 
 router.route('/upload').post(upload, uploadDocument);
 router.route('/view').post(viewAllDocuments);
