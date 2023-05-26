@@ -5,25 +5,23 @@ const multer = require('multer');
 
 const { uploadDocument, viewAllDocuments } = require('../controllers/controllerDocuments')
 
-
-const upload1 = multer({
-    storage: multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, "uploads")
-        },
-        filename: function (req, file, cb) {
-            cb(null, file.originalname + "-" + Date.now() + '.' + file.originalname.split('.').pop())
-        }
-    })
-}).single("file");
-
+const uploadedFiles = {};
 const upload = multer({
     storage: multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, 'uploads');
+            cb(null, 'uploads'); // Destination folder / File uploaded folder
         },
         filename: function (req, file, cb) {
-            cb(null, file.originalname);
+
+            // Generate a new file name
+            const originalExtension = file.originalname.split('.').pop();
+            const newFileName = Date.now() + '-' + Math.round(Math.random() * 1E9) + '.' + originalExtension;
+            // const newFileName = uniqueSuffix + '-' + file.originalname;
+            uploadedFiles[file.originalname] = newFileName;
+
+            cb(null, newFileName);
+
+            // cb(null, file.originalname);
         },
     }),
 }).single('file');

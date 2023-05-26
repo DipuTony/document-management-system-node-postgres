@@ -13,6 +13,8 @@ const uploadDocument = async (req, res) => {  // POST => /document/upload
 
     const receivedDigest = req.headers['x-digest']; // Assuming the digest is sent as a request header
     const receivedFile = req.file;// File path of the uploaded file
+console.log("receivedFile",receivedFile)
+    // return
 
     const filePath = receivedFile.path;
 
@@ -25,7 +27,7 @@ const uploadDocument = async (req, res) => {  // POST => /document/upload
         let key = "123"
         const computedDigest = crypto.createHash('SHA256').update(key).digest('hex');
 
-        console.log({ "Headser": receivedDigest, "computedDigest": computedDigest, "date=>>": data, "filePath": filePath, "err": err })
+        console.log({ "header": receivedDigest, "computedDigest": computedDigest, "date=>>": data, "filePath": filePath, "err": err })
 
         if (receivedDigest === computedDigest) {
             // Digest is valid, proceed with further processing

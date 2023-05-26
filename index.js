@@ -47,11 +47,16 @@ function authenticateToken(req, res, next) {
     });
 }
 
+
+//in this the '/uploads' is route to access the file and 'uploads' is the folder where we have stored the documents.
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // const customer = require('./src/routes/routesCustomer');
 const login = require('./src/routes/login')
 const register = require('./src/routes/register')
 const usersList = require('./src/routes/routeUsers')
 const document = require('./src/routes/routeDocuments')
+const consumerRoute = require('./src/routes/routeConsumer')
 
 app.use('/login', login)
 app.use('/register', register)
@@ -59,8 +64,7 @@ app.use('/register', register)
 // app.use('/customer', authenticateToken, customer)
 app.use('/users', usersList)
 app.use('/document', document)
-//in this the '/uploads' is route to access the file and 'uploads' is the folder where we have stored the documents.
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/consumer', consumerRoute)
 
 
 const PORT = process.env.PORT || 8001;
