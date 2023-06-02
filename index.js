@@ -57,6 +57,7 @@ const register = require('./src/routes/register')
 const usersList = require('./src/routes/routeUsers')
 const document = require('./src/routes/routeDocuments')
 const consumerRoute = require('./src/routes/routeConsumer')
+const myDocRoute = require('./src/routes/myDocRoute')
 
 app.use('/login', login)
 app.use('/register', register)
@@ -65,6 +66,9 @@ app.use('/register', register)
 app.use('/users', usersList)
 app.use('/document', document)
 app.use('/consumer', consumerRoute)
+
+app.use('/myDoc', myDocRoute)
+
 
 
 const PORT = process.env.PORT || 8001;

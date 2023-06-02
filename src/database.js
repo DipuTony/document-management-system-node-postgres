@@ -19,7 +19,7 @@ const checkConnection = async () => {
 };
 
 
-// checkConnection(); //This function will check the connection
+checkConnection(); //This function will check the connection
 
 module.exports = pool;
 

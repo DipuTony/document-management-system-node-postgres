@@ -3,7 +3,7 @@ const router = express.Router();
 
 const multer = require('multer');
 
-const { uploadDocument, viewAllDocuments } = require('../controllers/controllerDocuments')
+const { uploadDocument, viewAllDocuments } = require('../controllers/controllerMyDoc')
 
 const uploadedFiles = {};
 const upload = multer({
@@ -26,9 +26,9 @@ const upload = multer({
 router.route('/upload').post(upload, uploadDocument);
 router.route('/view').post(viewAllDocuments);
 
-// router.route('/view-by-id').post(viewUserById);
-// router.route('/delete').post(deleteCustomer);
-// router.route('/update').post(updateCustomer);
+// router.route('/view-one').post(viewOneDocument);
+// router.route('/delete').post(deleteDocument);
+// router.route('/update').post(updateDocument);
 
 
 module.exports = router;

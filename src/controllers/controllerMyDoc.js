@@ -1,10 +1,10 @@
-const { saveUploadDocumentDetails, viewAllDocument } = require('../modal/documetModal')
+const { saveUploadDocumentDetails, myDocUploadModal } = require('../modal/myDocModal')
 const pool = require('../database')
 const crypto = require('crypto');
 const fs = require('fs');
 
 
-const uploadDocument = async (req, res) => {  // POST => /document/upload
+const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
     if (!req.file || !req.headers['x-digest']) {
         // File or digest is missing, handle the error
         res.status(400).json({ status: false, message: 'File or digest is missing.', file: req.file, header: req.headers['x-digest'] });
@@ -44,7 +44,7 @@ const uploadDocument = async (req, res) => {  // POST => /document/upload
         const { originalname, encoding, mimetype, destination, filename, path, size } = req.file; // File Details
         const fileDetails = { originalname: originalname, encoding: encoding, mimetype: mimetype, destination: destination, filename: filename, path: path, size: size, ipAddress, tags, computedDigest }
         try {
-            const user = await saveUploadDocumentDetails(fileDetails);
+            const user = await myDocUploadModal(fileDetails);
             if (user) {
                 res.status(201).json({ "status": true, message: "Document Uploaded Successfully", data: user });
             } else {
