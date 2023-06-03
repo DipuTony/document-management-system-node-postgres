@@ -1,4 +1,4 @@
-const { saveUploadDocumentDetails, myDocUploadModal } = require('../modal/myDocModal')
+const { saveUploadDocumentDetails, myDocUploadModal, viewDocOneModal } = require('../modal/myDocModal')
 const pool = require('../database')
 const crypto = require('crypto');
 const fs = require('fs');
@@ -13,7 +13,6 @@ const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
 
     const receivedDigest = req.headers['x-digest']; // Assuming the digest is sent as a request header
     const receivedFile = req.file;// File path of the uploaded file
-    console.log("receivedFile", receivedFile)
     // return
 
     const filePath = receivedFile.path;
@@ -27,33 +26,47 @@ const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
         let key = "123"
         const computedDigest = crypto.createHash('SHA256').update(key).digest('hex');
 
-        console.log({ "header": receivedDigest, "computedDigest": computedDigest, "date=>>": data, "filePath": filePath, "err": err })
+        // console.log({ "header": receivedDigest, "computedDigest": computedDigest, "date=>>": data, "filePath": filePath, "err": err })
 
         if (receivedDigest === computedDigest) {
             // Digest is valid, proceed with further processing
-            handleAfterSuccess(computedDigest)
+            handleAfterDocDigestVerify(computedDigest)
         } else {
             // Digest is invalid, handle the error
             res.status(400).json({ status: false, message: 'Invalid file digest...' });
         }
     });
 
-    const handleAfterSuccess = async (computedDigest) => {
+    const handleAfterDocDigestVerify = async (computedDigest) => {
         const ipAddress = req.connection.remoteAddress;
-        const { tags } = req.body; // Get tags form request
+        const { tags, token } = req.body; // Get tags form request
         const { originalname, encoding, mimetype, destination, filename, path, size } = req.file; // File Details
-        const fileDetails = { originalname: originalname, encoding: encoding, mimetype: mimetype, destination: destination, filename: filename, path: path, size: size, ipAddress, tags, computedDigest }
+        const fileDetails = { originalname: originalname, encoding: encoding, mimetype: mimetype, destination: destination, filename: filename, path: path, size: size, ipAddress, tags, token, computedDigest }
         try {
-            const user = await myDocUploadModal(fileDetails);
-            if (user) {
-                res.status(201).json({ "status": true, message: "Document Uploaded Successfully", data: user });
-            } else {
-                res.status(201).json({ "status": false, message: "Failed to upload document user", data: user });
+            const result = await myDocUploadModal(fileDetails);
+            if (result) {
+                res.status(201).json({ status: result.status, message: result.message, data: result.date });
             }
         } catch (error) {
             console.error('Catch Error upload document', error);
             res.status(500).json({ error: 'Internal Server Error controller Document upload', msg: error });
         }
+    }
+}
+
+
+const myDocViewOne = async (req, res) => {
+    const { id, token } = req.body;
+    try {
+        const result = await viewDocOneModal(id, token);
+        if (result) {
+            res.status(201).json({ "status": true, message: "Document Details", data: result });
+        } else {
+            res.status(201).json({ "status": false, message: "No Data Found", data: [] });
+        }
+    } catch(error) {
+        console.error('Catch Error fetch one document', error);
+        res.status(500).json({ error: 'Internal Server Error controller fetch one document ', msg: error });
     }
 }
 
@@ -72,4 +85,4 @@ const viewAllDocuments = async (req, res) => {  // POST => /document/view
 
 }
 
-module.exports = { uploadDocument, viewAllDocuments };
+module.exports = { uploadDocument, viewAllDocuments, myDocViewOne };
