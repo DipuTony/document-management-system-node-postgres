@@ -1,18 +1,24 @@
-const { saveUploadDocumentDetails, myDocUploadModal, viewDocOneModal } = require('../modal/myDocModal')
+const { saveUploadDocumentDetails, myDocUploadModal, viewDocOneModal, searchByTagModal } = require('../modal/myDocModal')
 const pool = require('../database')
 const crypto = require('crypto');
 const fs = require('fs');
-const Joi = require('joi');
 
-// const validateTokenId = Joi.object({
-//     id: Joi.string().required(),
-//     token: Joi.number().min(18).required()
-// }).unknown();
-
-const { validateTokenId } = require('../components/schemas/myDoc')
+const { validateTokenId, fileUpload, validateToken } = require('../components/schemas/myDoc')
 
 
 const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
+
+
+    // console.log("file details.", req.file)
+    // res.json({ fileData: req.file, body: req.body, header: req.headers['x-digest'], ref: req.headers })
+    // return
+
+    const { error, value } = fileUpload.validate(req.body, { abortEarly: false });
+    if (error) {
+        const errorMessages = error.details.map(item => item.message);  //Collection Errors
+        return res.status(400).json({ error: errorMessages });
+    }
+
     if (!req.file || !req.headers['x-digest']) {
         // File or digest is missing, handle the error
         res.status(400).json({ status: false, message: 'File or digest is missing.', file: req.file, header: req.headers['x-digest'] });
@@ -21,7 +27,7 @@ const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
 
     const receivedDigest = req.headers['x-digest']; // Assuming the digest is sent as a request header
     const receivedFile = req.file;// File path of the uploaded file
-    // return
+
 
     const filePath = receivedFile.path;
 
@@ -86,13 +92,43 @@ const myDocViewOne = async (req, res) => {
     }
 }
 
-const viewAllDocuments = async (req, res) => {  // POST => /document/view
+const viewAllDocument = async (req, res) => {  // POST =>
+
+    const { error, value } = validateToken.validate(req.body, { abortEarly: false });
+    if (error) {
+        const errorMessages = error.details.map(item => item.message);  //Collection Errors
+        return res.status(400).json({ error: errorMessages });
+    }
+
+    const { token } = req.body;
     try {
-        const fetchDocList = await viewAllDocument()
+        const fetchDocList = await viewAllDocumentsModal(token)
         if (fetchDocList) {
             res.status(201).json({ "status": true, message: "List of documents", data: fetchDocList });
         } else {
-            res.status(201).json({ "status": false, message: "Failed to get doc lists", data: fetchDocList });
+            res.status(201).json({ "status": false, message: "No Data Found", data: fetchDocList });
+        }
+    } catch (error) {
+        console.error('Catch Error fetch doc lists document', error);
+        res.status(500).json({ error: 'Internal Server Error controller Document fetch ', msg: error });
+    }
+
+}
+const controllerSearchByTag = async (req, res) => {  // POST =>
+
+    // const { error, value } = validateToken.validate(req.body, { abortEarly: false });
+    // if (error) {
+    //     const errorMessages = error.details.map(item => item.message);  //Collection Errors
+    //     return res.status(400).json({ error: errorMessages });
+    // }
+
+    const { searchKeys } = req.body;
+    try {
+        const fetchDocList = await searchByTagModal(searchKeys)
+        if (fetchDocList) {
+            res.status(201).json({ "status": true, message: "result of search by tag", data: fetchDocList });
+        } else {
+            res.status(201).json({ "status": false, message: "No Data Found by search tag", data: [] });
         }
     } catch (error) {
         console.error('Catch Error fetch doc lists document', error);
@@ -101,4 +137,4 @@ const viewAllDocuments = async (req, res) => {  // POST => /document/view
 
 }
 
-module.exports = { uploadDocument, viewAllDocuments, myDocViewOne };
+module.exports = { uploadDocument, myDocViewOne, viewAllDocument, controllerSearchByTag };

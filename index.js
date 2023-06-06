@@ -2,16 +2,12 @@ const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
 let cors = require("cors");
-const multer = require('multer');
 const path = require('path'); // View Document
 require('dotenv').config();
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
 const baseurl = process.env.BASEURL;
-
-var pool = require('./src/database'); //Imported Postgres Database
-
 
 app.use(express.json()) // for parsing application/json
 
@@ -26,7 +22,7 @@ app.get('/', (req, res, next) => {
     next();
 });
 app.get('/', (req, res, next) => {
-    res.send("This is home index")
+    res.send("DMS Node Express Backend Running..")
     next();
 });
 app.get('/', (req, res) => {

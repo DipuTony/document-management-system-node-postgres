@@ -2,7 +2,7 @@ const pool = require('../database')
 
 const url = process.env.BASEURL;
 
-const myDocUploadModal = async (fileDetails) => { //myDoc/upload
+exports.myDocUploadModal = async (fileDetails) => { //myDoc/upload
     // const ipAddress = req.connection.remoteAddress
 
     try {
@@ -27,7 +27,7 @@ const myDocUploadModal = async (fileDetails) => { //myDoc/upload
     }
 };
 
-const viewDocOneModal = async (id, token) => {
+exports.viewDocOneModal = async (id, token) => {
     try {
         const client = await pool.connect();
         const query = `SELECT y.id,y.digest,y.created_at,y.path, y.tags, x.module_id FROM document_master AS y 
@@ -52,23 +52,57 @@ const viewDocOneModal = async (id, token) => {
 }
 
 
-const viewAllDocument = async () => {
+exports.viewAllDocumentsModal = async (token) => {
     try {
         const client = await pool.connect();
-        const result = await client.query('SELECT * FROM document_master');
+        const result = await client.query(`SELECT x.id, x.original_file_name, x.path, x.digest, x.ip_address, x.created_at, x.tags FROM document_master AS x
+        JOIN ref_document_tokens AS y ON x.module_id = y.module_id
+        WHERE x.deleted = 0 AND y.token = $1`, [token]);
         client.release()
-        const rows = result.rows;
-        const documentsWithFullPath = rows.map((row) => {
-            const fullPath = `${url}/${row.path}`; // Replace with your actual document path logic
-            return { ...row, fullPath };
-        });
+        const rows = result.rows[0]
+        if (rows) {
+            const rows = result.rows;
+            const documentsWithFullPath = rows.map((row) => {
+                const fullPath = `${url}/${row.path}`; // Replace with your actual document path logic
+                return { ...row, fullPath };
+            });
+            return documentsWithFullPath;
+        } else return false;
 
-        return documentsWithFullPath;
     } catch (error) {
         console.log("Error in Modal while fetching doc list")
         throw new Error('Error doc list fetch in Modal', error)
     }
 }
 
+exports.searchByTagModal = async (searchKeys) => {
 
-module.exports = { myDocUploadModal, viewAllDocument, viewDocOneModal };
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * FROM document_master WHERE tags LIKE $1;`, [`%${searchKeys}%`]);
+
+        // const keysArray = searchKeys.split(',').map((key) => key.trim());
+        // const placeholders = keysArray.map((_, index) => `$${index + 1}`).join(', ');
+        
+        // const query = `SELECT *
+        // FROM document_master
+        // WHERE tags LIKE ANY(ARRAY[${placeholders}]);`;
+        // const result = await client.query(query, keysArray);
+        
+        
+        client.release()
+        const rows = result.rows[0]
+        if (rows) {
+            const rows = result.rows;
+            const documentsWithFullPath = rows.map((row) => {
+                const fullPath = `${url}/${row.path}`; // Replace with your actual document path logic
+                return { ...row, fullPath };
+            });
+            return documentsWithFullPath;
+        } else return false;
+
+    } catch (error) {
+        console.log("Error in Modal while fetching doc list")
+        throw new Error('Error doc list fetch in Modal', error)
+    }
+}
