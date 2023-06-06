@@ -24,6 +24,37 @@ const upload = multer({
 }).single('file');
 
 router.route('/upload').post(upload, uploadDocument);
+
+
+
+
+
+/**
+ * @swagger
+ * /myDoc/view-one/:
+ *   post:
+ *     tags: [myDoc]
+ *     summary: Consumer can access single document
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#src/components/schemas/myDoc.js'
+ *     responses:
+ *       201:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Student'
+ */
 router.route('/view-one').post(myDocViewOne);
 
 router.route('/view').post(viewAllDocuments); // Need to work on this

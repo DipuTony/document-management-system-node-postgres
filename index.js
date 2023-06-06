@@ -5,6 +5,8 @@ let cors = require("cors");
 const multer = require('multer');
 const path = require('path'); // View Document
 require('dotenv').config();
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 
 const baseurl = process.env.BASEURL;
 
@@ -46,6 +48,32 @@ function authenticateToken(req, res, next) {
         next();
     });
 }
+
+
+
+// Swagger setup
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Example API',
+            version: '1.0.0',
+            description: 'API documentation for Example',
+        },
+        servers: [
+            {
+                url: 'http://localhost:3000/',
+                url: baseurl,
+            },
+        ],
+    },
+    apis: ['./src/routes/myDocRoute.js', './src/controllers/controllerUsers.js'], // Specify the correct path to your route files
+};
+const swaggerSpecs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
+
+
 
 
 //in this the '/uploads' is route to access the file and 'uploads' is the folder where we have stored the documents.

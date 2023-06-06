@@ -2,6 +2,14 @@ const { saveUploadDocumentDetails, myDocUploadModal, viewDocOneModal } = require
 const pool = require('../database')
 const crypto = require('crypto');
 const fs = require('fs');
+const Joi = require('joi');
+
+// const validateTokenId = Joi.object({
+//     id: Joi.string().required(),
+//     token: Joi.number().min(18).required()
+// }).unknown();
+
+const { validateTokenId } = require('../components/schemas/myDoc')
 
 
 const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
@@ -56,7 +64,15 @@ const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
 
 
 const myDocViewOne = async (req, res) => {
-    const { id, token } = req.body;
+
+    const { error, value } = validateTokenId.validate(req.body, { abortEarly: false });
+    if (error) {
+        const errorMessages = error.details.map(item => item.message);  //Collection Errors
+        return res.status(400).json({ error: errorMessages });
+    }
+
+    const { id, token, address } = req.body;
+    console.log("id, token, address", id, token, address)
     try {
         const result = await viewDocOneModal(id, token);
         if (result) {
@@ -64,7 +80,7 @@ const myDocViewOne = async (req, res) => {
         } else {
             res.status(201).json({ "status": false, message: "No Data Found", data: [] });
         }
-    } catch(error) {
+    } catch (error) {
         console.error('Catch Error fetch one document', error);
         res.status(500).json({ error: 'Internal Server Error controller fetch one document ', msg: error });
     }
