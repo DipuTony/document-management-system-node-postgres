@@ -13,9 +13,6 @@ const uploadDocument = async (req, res) => {  // POST => /document/upload
 
     const receivedDigest = req.headers['x-digest']; // Assuming the digest is sent as a request header
     const receivedFile = req.file;// File path of the uploaded file
-    console.log("receivedFile", receivedFile)
-    // return
-
     const filePath = receivedFile.path;
 
     // Read the file using fs.readFile

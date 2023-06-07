@@ -1,4 +1,4 @@
-const { saveUploadDocumentDetails, myDocUploadModal, viewDocOneModal, searchByTagModal } = require('../modal/myDocModal')
+const { viewAllDocumentsModal, myDocUploadModal, viewDocOneModal, searchByTagModal } = require('../modal/myDocModal')
 const pool = require('../database')
 const crypto = require('crypto');
 const fs = require('fs');
@@ -7,11 +7,6 @@ const { validateTokenId, fileUpload, validateToken } = require('../components/sc
 
 
 const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
-
-
-    // console.log("file details.", req.file)
-    // res.json({ fileData: req.file, body: req.body, header: req.headers['x-digest'], ref: req.headers })
-    // return
 
     const { error, value } = fileUpload.validate(req.body, { abortEarly: false });
     if (error) {
@@ -37,16 +32,11 @@ const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
             // Handle error
             return res.status(500).json({ status: false, message: 'Error reading file.' });
         }
-        let key = "123"
-        const computedDigest = crypto.createHash('SHA256').update(key).digest('hex');
-
-        // console.log({ "header": receivedDigest, "computedDigest": computedDigest, "date=>>": data, "filePath": filePath, "err": err })
+        const computedDigest = crypto.createHash('SHA256').update(data).digest('hex');
 
         if (receivedDigest === computedDigest) {
-            // Digest is valid, proceed with further processing
             handleAfterDocDigestVerify(computedDigest)
         } else {
-            // Digest is invalid, handle the error
             res.status(400).json({ status: false, message: 'Invalid file digest...' });
         }
     });
