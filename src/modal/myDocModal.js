@@ -2,6 +2,11 @@ const pool = require('../database')
 
 const url = process.env.BASEURL;
 
+exports.getFolderNameModal = async (fileDetails) => { //myDoc/upload
+
+console.log("asking for folder name..")
+}
+
 exports.myDocUploadModal = async (fileDetails) => { //myDoc/upload
     // const ipAddress = req.connection.remoteAddress
 
@@ -12,8 +17,8 @@ exports.myDocUploadModal = async (fileDetails) => { //myDoc/upload
         const moduleId = result?.rows[0]?.module_id;
         if (moduleId) {
             const client = await pool.connect();
-            const query = 'INSERT INTO document_master (original_file_name, encoding, type, destination, file_name, path, size, ip_address, tags, digest, module_id) VALUES ($1, $2, $3,$4,$5,$6,$7, $8, $9, $10, $11) RETURNING *';
-            const values = [fileDetails.originalname, fileDetails.encoding, fileDetails.mimetype, fileDetails.destination, fileDetails.filename, fileDetails.path, fileDetails.size, fileDetails.ipAddress, fileDetails.tags, fileDetails.computedDigest, moduleId];
+            const query = 'INSERT INTO document (original_file_name, encoding, type, destination, file_name, path, size, ip_address, tags, digest, module_id, folder_id) VALUES ($1, $2, $3,$4,$5,$6,$7, $8, $9, $10, $11, $12) RETURNING *';
+            const values = [fileDetails.originalname, fileDetails.encoding, fileDetails.mimetype, fileDetails.destination, fileDetails.filename, fileDetails.path, fileDetails.size, fileDetails.ipAddress, fileDetails.tags, fileDetails.computedDigest, moduleId, 2];
             const result = await client.query(query, values);
             client.release();
             if (result.rows[0]) return { status: true, message: "Document Upload Success." }
@@ -30,7 +35,7 @@ exports.myDocUploadModal = async (fileDetails) => { //myDoc/upload
 exports.viewDocOneModal = async (id, token) => {
     try {
         const client = await pool.connect();
-        const query = `SELECT y.id,y.digest,y.created_at,y.path, y.tags, x.module_id FROM document_master AS y 
+        const query = `SELECT y.id,y.digest,y.created_at,y.path, y.tags, x.module_id FROM document AS y 
         JOIN ref_document_tokens AS x ON x.module_id = y.module_id
         WHERE y.id = $1
         AND x.token = $2
@@ -55,15 +60,17 @@ exports.viewDocOneModal = async (id, token) => {
 exports.viewAllDocumentsModal = async (token) => {
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT x.id, x.original_file_name, x.path, x.digest, x.ip_address, x.created_at, x.tags FROM document_master AS x
-        JOIN ref_document_tokens AS y ON x.module_id = y.module_id
-        WHERE x.deleted = 0 AND y.token = $1`, [token]);
+        const result = await client.query(`SELECT d.id, d.original_file_name, d.file_name, d.path, d.digest, d.ip_address, d.created_at, d.tags, f.folder_name FROM document AS d
+        JOIN ref_document_tokens AS rdt ON d.module_id = rdt.module_id
+        JOIN folders AS f ON d.folder_id = f.folder_id
+        WHERE d.deleted = 0 AND rdt.token = $1`, [token]);
         client.release()
         const rows = result.rows[0]
         if (rows) {
             const rows = result.rows;
             const documentsWithFullPath = rows.map((row) => {
-                const fullPath = `${url}/${row.path}`; // Replace with your actual document path logic
+                // const fullPath = `${url}/${row.path}`; // Replace with your actual document path logic
+                const fullPath = `${url}/uploads/${row.folder_name}/${row.file_name}`; // Replace with your actual document path logic
                 return { ...row, fullPath };
             });
             return documentsWithFullPath;
@@ -79,17 +86,17 @@ exports.searchByTagModal = async (searchKeys) => {
 
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM document_master WHERE tags LIKE $1;`, [`%${searchKeys}%`]);
+        const result = await client.query(`SELECT * FROM document WHERE tags LIKE $1;`, [`%${searchKeys}%`]);
 
         // const keysArray = searchKeys.split(',').map((key) => key.trim());
         // const placeholders = keysArray.map((_, index) => `$${index + 1}`).join(', ');
-        
+
         // const query = `SELECT *
-        // FROM document_master
+        // FROM document
         // WHERE tags LIKE ANY(ARRAY[${placeholders}]);`;
         // const result = await client.query(query, keysArray);
-        
-        
+
+
         client.release()
         const rows = result.rows[0]
         if (rows) {

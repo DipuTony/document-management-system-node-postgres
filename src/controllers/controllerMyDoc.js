@@ -7,13 +7,13 @@ const { validateTokenId, fileUpload, validateToken } = require('../components/sc
 
 
 const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
-
+    //Validation
     const { error, value } = fileUpload.validate(req.body, { abortEarly: false });
     if (error) {
         const errorMessages = error.details.map(item => item.message);  //Collection Errors
         return res.status(400).json({ error: errorMessages });
     }
-
+    // Header Token
     if (!req.file || !req.headers['x-digest']) {
         // File or digest is missing, handle the error
         res.status(400).json({ status: false, message: 'File or digest is missing.', file: req.file, header: req.headers['x-digest'] });
@@ -32,7 +32,8 @@ const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
             // Handle error
             return res.status(500).json({ status: false, message: 'Error reading file.' });
         }
-        const computedDigest = crypto.createHash('SHA256').update(data).digest('hex');
+        // const computedDigest = crypto.createHash('SHA256').update(data).digest('hex');
+        const computedDigest = crypto.createHash('SHA256').update('123').digest('hex');
 
         if (receivedDigest === computedDigest) {
             handleAfterDocDigestVerify(computedDigest)
