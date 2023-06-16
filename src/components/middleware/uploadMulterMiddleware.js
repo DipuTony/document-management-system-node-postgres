@@ -1,6 +1,5 @@
 
 const multer = require('multer');
-const { getFolderNameModal } = require('../../modal/myDocModal');
 
 
 const uploadedFiles = {};
@@ -9,8 +8,7 @@ exports.uploadFileMulter = multer({
     storage: multer.diskStorage({
         destination: function (req, file, cb) {
             // return console.log("here", file)
-            // const result = getFolderNameModal()
-            cb(null, 'uploads/property'); // Destination folder / File uploaded folder
+            cb(null, 'uploads'); // Destination folder / File uploaded folder
         },
         filename: function (req, file, cb) {
 

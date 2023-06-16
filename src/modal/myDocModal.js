@@ -4,7 +4,7 @@ const url = process.env.BASEURL;
 
 exports.getFolderNameModal = async (fileDetails) => { //myDoc/upload
 
-console.log("asking for folder name..")
+console.log("asking for folder name..",fileDetails)
 }
 
 exports.myDocUploadModal = async (fileDetails) => { //myDoc/upload

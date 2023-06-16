@@ -7,7 +7,6 @@ const { uploadDocument, myDocViewOne, viewAllDocument, controllerSearchByTag } =
 
 router.route('/upload').post(uploadFileMulter, uploadDocument);
 router.route('/search-by-tag').post(controllerSearchByTag);
-
 router.route('/view-one').post(myDocViewOne);
 router.route('/view-all').post(viewAllDocument);
 

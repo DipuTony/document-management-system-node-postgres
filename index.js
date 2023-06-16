@@ -8,6 +8,8 @@ require('dotenv').config();
 const baseurl = process.env.BASEURL;
 
 app.use(express.json()) // for parsing application/json
+// Middleware to parse the request body
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request body
 
 // Your secret key for signing the JSON Web Token
 const secretKey = 'mysecretkey';
@@ -57,8 +59,6 @@ app.use('/register', register)
 app.use('/users', usersList)
 app.use('/consumer', consumerRoute)
 app.use('/myDoc', myDocRoute)
-
-
 
 const PORT = process.env.PORT || 8001;
 app.listen(PORT, () => {
