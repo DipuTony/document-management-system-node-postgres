@@ -1,5 +1,4 @@
 const { viewAllDocumentsModal, myDocUploadModal, viewDocOneModal, searchByTagModal } = require('../modal/myDocModal')
-const pool = require('../database')
 const crypto = require('crypto');
 const fs = require('fs');
 

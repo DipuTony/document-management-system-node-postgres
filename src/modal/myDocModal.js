@@ -69,7 +69,6 @@ exports.viewAllDocumentsModal = async (token) => {
         if (rows) {
             const rows = result.rows;
             const documentsWithFullPath = rows.map((row) => {
-                // const fullPath = `${url}/${row.path}`; // Replace with your actual document path logic
                 const fullPath = `${url}/uploads/${row.folder_name}/${row.file_name}`; // Replace with your actual document path logic
                 return { ...row, fullPath };
             });
