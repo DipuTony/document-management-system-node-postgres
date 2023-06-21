@@ -2,9 +2,15 @@ const pool = require('../database')
 
 const url = process.env.BASEURL;
 
-exports.getFolderNameModal = async (fileDetails) => { //myDoc/upload
-
-console.log("asking for folder name..",fileDetails)
+exports.getUploadFolderNameModal = async (headerToken) => {
+    const client = await pool.connect();
+    const result = await client.query(`SELECT f.folder_name FROM folders AS f
+    JOIN (SELECT DISTINCT d.folder_id FROM ref_document_tokens AS rdt
+        JOIN module_master AS mm ON rdt.module_id = mm.id	
+        JOIN document AS d ON d.module_id = mm.id
+        WHERE rdt.token = $1) AS d ON f.folder_id= d.folder_id`, [headerToken]);
+    client.release();
+    return result.rows[0]?.folder_name ? result.rows[0]?.folder_name : null;
 }
 
 exports.myDocUploadModal = async (fileDetails) => { //myDoc/upload

@@ -1,22 +1,25 @@
 const multer = require('multer');
+const { getUploadFolderNameModal } = require('../../modal/myDocModal');
 
 const uploadedFiles = {};
 
-exports.uploadFileMulter = (req, res, next) => {
-  const check = req.headers.test;
+exports.uploadFileMulter = async (req, res, next) => {
+  const headerToken = req.headers.test;
 
-  if (check == 123) {
-    console.log("Water")
-  } else if (check == "") {
-    console.log("default")
-  }
+  const folderName = await getUploadFolderNameModal(headerToken);
+  console.log("Upload on -- ", folderName)
+  // if (check == 123) {
+  //   console.log("Water")
+  // } else if (check == "") {
+  //   console.log("default")
+  // }
 
 
   const upload = multer({
     storage: multer.diskStorage({
       destination: function (req, file, cb) {
 
-        cb(null, 'uploads'); // Destination folder / File uploaded folder
+        cb(null, `uploads/${folderName}`); // Destination folder / File uploaded folder
       },
       filename: function (req, file, cb) {
         const originalExtension = file.originalname.split('.').pop();
