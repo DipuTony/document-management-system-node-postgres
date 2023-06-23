@@ -17,5 +17,5 @@ exports.fileUpload = Joi.object({
     //     // Add more validation rules specific to the file if needed
     // }).required(),
     tags: Joi.string().required(),
-    token: Joi.number().required()
+    // token: Joi.number().required()
 }).unknown();

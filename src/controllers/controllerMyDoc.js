@@ -42,8 +42,9 @@ const uploadDocument = async (req, res) => {  // POST => /myDoc/upload
     });
 
     const handleAfterDocDigestVerify = async (computedDigest) => {
-        const ipAddress = req.connection.remoteAddress;
-        const { tags, token } = req.body; // Get tags form request
+        const ipAddress = req.connection.remoteAddress; // Get IP Address
+        const { tags } = req.body; // Get tags form request
+        const token = req.headers.token; // Get token from header only for document upload
         const { originalname, encoding, mimetype, destination, filename, path, size } = req.file; // File Details
         const fileDetails = { originalname: originalname, encoding: encoding, mimetype: mimetype, destination: destination, filename: filename, path: path, size: size, ipAddress, tags, token, computedDigest }
         try {

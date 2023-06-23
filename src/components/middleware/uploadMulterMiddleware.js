@@ -4,16 +4,11 @@ const { getUploadFolderNameModal } = require('../../modal/myDocModal');
 const uploadedFiles = {};
 
 exports.uploadFileMulter = async (req, res, next) => {
-  const headerToken = req.headers.test;
-
+  const headerToken = req.headers.token;
+  if(!headerToken) return res.status(422).json({ message: 'Header Token Require.' });
+//Get Folder name form db by token from header
   const folderName = await getUploadFolderNameModal(headerToken);
   console.log("Upload on -- ", folderName)
-  // if (check == 123) {
-  //   console.log("Water")
-  // } else if (check == "") {
-  //   console.log("default")
-  // }
-
 
   const upload = multer({
     storage: multer.diskStorage({
