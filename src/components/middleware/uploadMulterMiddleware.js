@@ -8,7 +8,6 @@ exports.uploadFileMulter = async (req, res, next) => {
   if(!headerToken) return res.status(422).json({ message: 'Header Token Require.' });
 //Get Folder name form db by token from header
   const folderName = await getUploadFolderNameModal(headerToken);
-  console.log("Upload on -- ", folderName)
 
   const upload = multer({
     storage: multer.diskStorage({

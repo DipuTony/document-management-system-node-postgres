@@ -68,8 +68,7 @@ const myDocViewOne = async (req, res) => {
         return res.status(400).json({ error: errorMessages });
     }
 
-    const { id, token, address } = req.body;
-    console.log("id, token, address", id, token, address)
+    const { id, token } = req.body;
     try {
         const result = await viewDocOneModal(id, token);
         if (result) {

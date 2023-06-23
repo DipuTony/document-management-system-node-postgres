@@ -57,7 +57,7 @@ const myDocRoute = require('./src/routes/myDocRoute')
 app.use('/login', login)
 app.use('/register', register)
 app.use('/users', usersList)
-app.use('/consumer', consumerRoute)
+app.use('/admin/consumer', consumerRoute)
 app.use('/myDoc', myDocRoute)
 
 const PORT = process.env.PORT || 8001;
