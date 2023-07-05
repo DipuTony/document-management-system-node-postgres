@@ -1,7 +1,9 @@
 const pool = require('../database')
 const { createUser, viewByIdUser, deleteUser, modalUpdateUser } = require('../modal/modalUsers')
 
-const listUsers = async (req, res) => {       ////   /users/view => POST
+
+//Controller function for Show list of users
+const listUsers = async (req, res) => {
     try {
         const client = await pool.connect();
         const result = await client.query('SELECT * FROM user_infos');
@@ -13,13 +15,14 @@ const listUsers = async (req, res) => {       ////   /users/view => POST
     }
 }
 
-const addUser = async (req, res) => { // POST => users/add
+//Controller function fo add new user
+const addUser = async (req, res) => {
     const { name, phone, email } = req.body;
     try {
         const user = await createUser(name, phone, email);
-        if(user){
+        if (user) {
             res.status(201).json({ "status": true, message: "User Created Successfully", data: user });
-        }else{
+        } else {
             res.status(201).json({ "status": false, message: "Failed to Created user", data: user });
         }
     } catch (error) {
@@ -27,6 +30,8 @@ const addUser = async (req, res) => { // POST => users/add
         res.status(500).json({ error: 'Internal Server Error', msg: error });
     }
 }
+
+// Controller Function to view user by ID
 const viewUserById = async (req, res) => { // POST => users/view-by-id
     const { id } = req.body;
     try {
@@ -41,7 +46,10 @@ const viewUserById = async (req, res) => { // POST => users/view-by-id
         res.status(500).json({ error: 'Error in View by id controller', payload: req.body, msg: error });
     }
 }
-const deleteUserById = async (req, res) => { // POST => users/delete
+
+
+//controller function to delete user by id
+const deleteUserById = async (req, res) => {
     const { id } = req.body;
     try {
         const userByID = await deleteUser(id);
@@ -56,13 +64,14 @@ const deleteUserById = async (req, res) => { // POST => users/delete
     }
 }
 
-const updateUser = async (req, res) => { // POST => users/update
+//Controller function to update user details
+const updateUser = async (req, res) => {
     const { name, phone, email, id } = req.body;
     try {
         const user = await modalUpdateUser(name, phone, email, id);
-        if(user){
+        if (user) {
             res.status(201).json({ "status": true, message: "User Update Successfully", data: user });
-        }else{
+        } else {
             res.status(201).json({ "status": false, message: "Failed to Update user", data: user });
         }
     } catch (error) {

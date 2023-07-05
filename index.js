@@ -7,7 +7,9 @@ require('dotenv').config();
 
 const baseurl = process.env.BASEURL;
 
-app.use(express.json()) // for parsing application/json
+// for parsing application/json
+app.use(express.json()) 
+
 // Middleware to parse the request body
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request body
 
@@ -45,11 +47,12 @@ function authenticateToken(req, res, next) {
     });
 }
 
-//in this the '/uploads' is route to access the file and 'uploads' is the folder where we have stored the documents.
+// Route to access uploaded files
+// '/uploads' is the route, and 'uploads' is the folder where the documents are stored
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-const login = require('./src/routes/login')
-const register = require('./src/routes/register')
+const login = require('./src/controllers/controllerLogin')
+const register = require('./src/controllers/controllerRegister')
 const usersList = require('./src/routes/routeUsers')
 const consumerRoute = require('./src/routes/routeConsumer')
 const myDocRoute = require('./src/routes/myDocRoute')

@@ -2,6 +2,12 @@ const pool = require('../database')
 
 const url = process.env.BASEURL;
 
+/**
+ * Retrieves the folder name where files will be uploaded based on the provided header token.
+ * @param {string} headerToken - Token from the request header.
+ * @returns {string|null} - The folder name if found, otherwise null.
+ */
+
 exports.getUploadFolderNameModal = async (headerToken) => {
     const client = await pool.connect();
     //Get Folder Name where files will be uploaded.
@@ -14,6 +20,13 @@ exports.getUploadFolderNameModal = async (headerToken) => {
     return result.rows[0]?.folder_name ? result.rows[0]?.folder_name : null;
 }
 
+
+/**
+ * Uploads a document to the database.
+ * @param {Object} fileDetails - File details including originalname, encoding, mimetype, destination, filename, path, size, ipAddress, tags, computedDigest, and token.
+ * @returns {Object} - The status and message of the upload process.
+ * @throws {Error} - If there is an error during document upload.
+ */
 exports.myDocUploadModal = async (fileDetails) => { //myDoc/upload
     // const ipAddress = req.connection.remoteAddress
 
@@ -49,6 +62,14 @@ exports.myDocUploadModal = async (fileDetails) => { //myDoc/upload
     }
 };
 
+/**
+ * Retrieves information about a specific document based on the ID and token.
+ * @param {number} id - Document ID.
+ * @param {string} token - Token from the request.
+ * @returns {Object|boolean} - The retrieved document information if found, otherwise false.
+ * @throws {Error} - If there is an error while retrieving the document.
+ */
+
 exports.viewDocOneModal = async (id, token) => {
     try {
         const client = await pool.connect();
@@ -72,6 +93,12 @@ exports.viewDocOneModal = async (id, token) => {
     }
 }
 
+/**
+ * Retrieves information about all documents based on the provided token.
+ * @param {string} token - Token from the request.
+ * @returns {Array|boolean} - An array of documents with their full paths if found, otherwise false.
+ * @throws {Error} - If there is an error while retrieving the documents.
+ */
 
 exports.viewAllDocumentsModal = async (token) => {
     try {
@@ -97,6 +124,14 @@ exports.viewAllDocumentsModal = async (token) => {
         throw new Error('Error doc list fetch in Modal', error)
     }
 }
+
+
+/**
+ * Searches for documents based on the provided search keys.
+ * @param {string} searchKeys - Search keys.
+ * @returns {Array|boolean} - An array of documents with their full paths if found, otherwise false.
+ * @throws {Error} - If there is an error while searching for documents.
+ */
 
 exports.searchByTagModal = async (searchKeys) => {
 

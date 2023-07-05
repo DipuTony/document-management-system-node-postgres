@@ -1,6 +1,12 @@
 const pool = require('../database')
 
 
+/**
+ * Retrieves all consumer data from the database.
+ * @returns {Array} - Array of consumer data.
+ * @throws {Error} - If there is an error while fetching consumer data.
+ */
+
 const viewAllConsumerModal = async () => { // consumer/view-all
     try {
         const client = await pool.connect();
@@ -14,6 +20,14 @@ const viewAllConsumerModal = async () => { // consumer/view-all
         throw new Error('Error doc list fetch in Modal', error)
     }
 }
+
+/**
+ * Retrieves all document data from the database based on the module ID.
+ * @param {Object} body - Request body containing the module ID.
+ * @returns {Array} - Array of document data.
+ * @throws {Error} - If there is an error while fetching document data.
+ */
+
 const viewAllDocumentsModal = async (body) => { // consumer/view-all
     // console.log("body", typeof (body), body)
     if (Object.keys(body).length === 0) {
@@ -49,6 +63,15 @@ const viewAllDocumentsModal = async (body) => { // consumer/view-all
         throw new Error('Error doc list fetch in Modal', error)
     }
 }
+
+
+/**
+ * Retrieves consumer data from the database based on the ID.
+ * @param {number} id - Consumer ID.
+ * @returns {Array} - Array of consumer data.
+ * @throws {Error} - If there is an error while fetching consumer data.
+ */
+
 const viewOneConsumerModal = async (id) => { // consumer/view-one
     try {
         const client = await pool.connect();
@@ -64,6 +87,15 @@ const viewOneConsumerModal = async (id) => { // consumer/view-one
         throw new Error('Error doc list fetch in Modal', error)
     }
 }
+
+
+/**
+ * Creates a new consumer in the database.
+ * @param {string} token - Consumer token.
+ * @param {string} module - Consumer module name.
+ * @returns {Object} - Object indicating the success of the operation.
+ * @throws {Error} - If there is an error while creating the consumer.
+ */
 
 const createConsumerModal = async (token, module) => {
 
